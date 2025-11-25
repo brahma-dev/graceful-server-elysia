@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 
-import { Elysia, error, t } from 'elysia';
+import { Elysia, t } from 'elysia';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -45,14 +45,14 @@ export const pluginGracefulServer = (userConfig: PluginGracefulServer = {}) => {
 
     .get(
       config.readinessEndpoint,
-      () => {
+      ({ status }) => {
         if (global.gracefulServerIsReady) {
           return {
             status: 'ready',
           };
         }
 
-        return error(500);
+        throw status(500, 'Server is not ready.');
       },
       {
         response: {
